@@ -1,0 +1,28 @@
+<package format="2">
+    <name>simplelayer</name>
+    <version>1.0.0</version>
+    <description>
+	test
+
+    </description>
+    <maintainer email="soliva@seaos.co.jp">John Paul Soliva</maintainer>
+
+    <license>BSD</license>
+
+    <buildtool_depend>catkin</buildtool_depend>
+    <depend>roscpp</depend>
+    <depend>tf</depend>
+    <depend>costmap_2d</depend>
+    <depend>nav_core</depend>
+    <depend>pluginlib</depend>
+    <depend>eigen</depend>
+    <build_depend>cmake_modules</build_depend>
+    <build_depend>base_local_planner</build_depend>
+
+    <export>
+      <costmap_2d plugin="${prefix}/simple_layers.xml" />
+    </export>
+
+</package>
+
+
