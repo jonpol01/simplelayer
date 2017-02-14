@@ -9,6 +9,9 @@ find_package(catkin REQUIRED
             nav_core
             pluginlib
             base_local_planner
+            std_msgs
+            genmsg
+            rospy
         )
 
 find_package(Eigen REQUIRED)
