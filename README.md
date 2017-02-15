@@ -2,15 +2,19 @@
 
 #Install:
 
-cd < catkin workspace>
+Clone this repo to your catkin workspace
 
-git clone https://github.com/jonpol01/simplelayer.git
+      cd < catkin workspace>
 
-cd < dir >/catkin_ws
+      git clone https://github.com/jonpol01/simplelayer.git
 
-source ./deve/setup.bash
+      cd < dir >/catkin_ws
 
-catkin_make
+      source ./deve/setup.bash
+
+Make
+
+      catkin_make
 
 #Usage:
 note. This requires you to run roscore or your own environment up running.
@@ -19,10 +23,10 @@ note. This requires you to run roscore or your own environment up running.
 
    add this on your both global and local costmap params under plugins
 
-   - {name: SimpleLayer,          type: "simple_layer_namespace::SimpleLayer"}
+         - {name: SimpleLayer,          type: "simple_layer_namespace::SimpleLayer"}
 
 2. Launch your robot / stage
 
 3. Then run the fake / robot pose publisher
 
-rosrun beginner_tutorials talker
+         rosrun beginner_tutorials talker
