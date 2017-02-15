@@ -1,7 +1,5 @@
-//#include<simple_layers/simple_layer.h>
 #include "simple_layer.h"
 
-//#include <sstream>
 #include <pluginlib/class_list_macros.h>
 
 PLUGINLIB_EXPORT_CLASS(simple_layer_namespace::SimpleLayer, costmap_2d::Layer)
@@ -13,17 +11,22 @@ namespace simple_layer_namespace
 
 SimpleLayer::SimpleLayer() {}
 
+//Our callback function for the topic subscriber
+//everything that goes to the topic falls here
 void SimpleLayer::chatterCallback(const std_msgs::String::ConstPtr& msg)
 {
-//   ROS_INFO("I heard: [%s]", msg->data.c_str());
-  sprintf(byte, "%s", msg->data.c_str());
+  sprintf(byte, "%s", msg->data.c_str());	//pass the message to local char byte.
 }
 
+//This makes the plugin initialize on roscore boot
 void SimpleLayer::onInitialize()
 {
 
   ros::NodeHandle nh("~/" + name_);
   current_ = true;
+
+  //Subscribe to a topic our custom topic
+  //this should be the oe to feed us the fake / robot pose
   sub = nh.subscribe("chatter", 1000, &SimpleLayer::chatterCallback, this);
 
   dsrv_ = new dynamic_reconfigure::Server<costmap_2d::GenericPluginConfig>(nh);
@@ -44,15 +47,10 @@ void SimpleLayer::updateBounds(double robot_x, double robot_y, double robot_yaw,
   if (!enabled_)
     return;
 
-  mark_x_ = robot_x + cos(robot_yaw);
-  mark_y_ = robot_y + sin(robot_yaw);
-
-  *min_x = std::min(*min_x, mark_x_);
-  *min_y = std::min(*min_y, mark_y_);
-  *max_x = std::max(*max_x, mark_x_);
-  *max_y = std::max(*max_y, mark_y_);
+  //do something
 }
 
+//This is called periodically by the updateMap func of ROS
 void SimpleLayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i,
                                           int max_j)
 {
@@ -75,7 +73,6 @@ void SimpleLayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int
   }
 
   i = 0;
-//  ROS_INFO("%f, %f", mark_x_, mark_y_);
 
   if(master_grid.worldToMap(bot_x_, bot_y_, mx, my)){
     master_grid.setCost(mx, my, LETHAL_OBSTACLE);
