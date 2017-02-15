@@ -19,7 +19,7 @@ note. This requires you to run roscore or your own environment up running.
 
    add this on your both global and local costmap params under plugins
 
-- {name: SimpleLayer,          type: "simple_layer_namespace::SimpleLayer"}
+   - {name: SimpleLayer,          type: "simple_layer_namespace::SimpleLayer"}
 
 2. Launch your robot / stage
 
