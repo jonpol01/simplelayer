@@ -1,8 +1,7 @@
 //#include<simple_layers/simple_layer.h>
 #include "simple_layer.h"
-#include "ros/ros.h"		//for subscribing to topic
-#include "std_msgs/String.h"	//""
 
+//#include <sstream>
 #include <pluginlib/class_list_macros.h>
 
 PLUGINLIB_EXPORT_CLASS(simple_layer_namespace::SimpleLayer, costmap_2d::Layer)
@@ -16,20 +15,16 @@ SimpleLayer::SimpleLayer() {}
 
 void SimpleLayer::chatterCallback(const std_msgs::String::ConstPtr& msg)
 {
-  ROS_INFO("I heard: [%s]", msg->data.c_str());
-
-  
+//   ROS_INFO("I heard: [%s]", msg->data.c_str());
+  sprintf(byte, "%s", msg->data.c_str());
 }
 
 void SimpleLayer::onInitialize()
 {
 
   ros::NodeHandle nh("~/" + name_);
-  std::string chatter;
   current_ = true;
-
-  sub = nh.subscribe(chatter, 1, &SimpleLayer::chatterCallback, this);
-//  sub_ = nh.subscribe("chatter", 1000, &SimpleLayer::chatterCallback);
+  sub = nh.subscribe("chatter", 1000, &SimpleLayer::chatterCallback, this);
 
   dsrv_ = new dynamic_reconfigure::Server<costmap_2d::GenericPluginConfig>(nh);
   dynamic_reconfigure::Server<costmap_2d::GenericPluginConfig>::CallbackType cb = boost::bind(
@@ -49,7 +44,6 @@ void SimpleLayer::updateBounds(double robot_x, double robot_y, double robot_yaw,
   if (!enabled_)
     return;
 
-//  ROS_INFO("uBOUNDS");
   mark_x_ = robot_x + cos(robot_yaw);
   mark_y_ = robot_y + sin(robot_yaw);
 
@@ -66,19 +60,27 @@ void SimpleLayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int
     return;
   unsigned int mx;
   unsigned int my;
-//  ros::init();
+  unsigned int i = 0;
+  char * ph;
 
-//  ros::NodeHandle n;
+  ph = strtok(byte, " ,");
+  while (ph != NULL)
+  {
+    if(i == 0) bot_x_ = atof(ph);
+    else bot_y_ = atof(ph);
 
-//  ros::Subscriber sub = n.subscribe("chatter", 1000, chatterCallback);
-//  ros::Subscriber subscriber("chatter", chatterCallback);
-//  ros::spinOnce();
+    //ROS_INFO("%s", ph);
+    ph = strtok (NULL, " ,");
+    i++;
+  }
 
-//  ROS_INFO("uCost");
-  if(master_grid.worldToMap(mark_x_, mark_y_, mx, my)){
+  i = 0;
+//  ROS_INFO("%f, %f", mark_x_, mark_y_);
+
+  if(master_grid.worldToMap(bot_x_, bot_y_, mx, my)){
     master_grid.setCost(mx, my, LETHAL_OBSTACLE);
   }
 }
 
-} // end namespace
 
+} // end namespace

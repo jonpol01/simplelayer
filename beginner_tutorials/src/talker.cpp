@@ -3,6 +3,9 @@
 
 #include <sstream>
 
+#define Leg_x 2.438
+#define Leg_y 1.949
+
 /**
  * This tutorial demonstrates simple sending of messages over the ROS system.
  */
@@ -44,7 +47,7 @@ int main(int argc, char **argv)
    * than we can send them, the number here specifies how many messages to
    * buffer up before throwing some away.
    */
-  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("/move_base/local_costmap/SimpleLayer/chatter", 1000);
 
   ros::Rate loop_rate(10);
 
@@ -53,6 +56,14 @@ int main(int argc, char **argv)
    * a unique string for each message.
    */
   int count = 0;
+  double _x = Leg_x;
+  double _y = Leg_y;
+  bool x_flg, y_flg;
+  char byte[1000];
+//  unsigned int mx;
+//  unsigned int my;
+
+
   while (ros::ok())
   {
     /**
@@ -61,7 +72,11 @@ int main(int argc, char **argv)
     std_msgs::String msg;
 
     std::stringstream ss;
-    ss << "hello world " << count;
+//    ss << "hello world " << count;
+
+    sprintf(byte, "%.3f,%.3f", _x, _y);
+
+    ss << byte;
     msg.data = ss.str();
 
     ROS_INFO("%s", msg.data.c_str());
@@ -78,6 +93,18 @@ int main(int argc, char **argv)
 
     loop_rate.sleep();
     ++count;
+
+    if(_x >= 20) x_flg = true;
+    else if(_x <= Leg_x) x_flg = false;
+
+    if(x_flg == true) _x -= 0.008;
+    else _x += 0.008;
+
+    if(_y >= 7) y_flg = true;
+    else if(_y <= Leg_y) y_flg = false;
+
+    if(y_flg == true) _y -= 0.007;
+    else _y += 0.007;
   }
 
 

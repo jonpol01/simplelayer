@@ -19,13 +19,18 @@ public:
   virtual void updateBounds(double robot_x, double robot_y, double robot_yaw, double* min_x, double* min_y, double* max_x,
                              double* max_y);
   virtual void updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j);
-  virtual void chatterCallback(const std_msgs::String::ConstPtr&);
-  ros::Subscriber sub;
 private:
   void reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t level);
 
   double mark_x_, mark_y_;
+  double bot_x_, bot_y_;
+
+  char byte[1000];
   dynamic_reconfigure::Server<costmap_2d::GenericPluginConfig> *dsrv_;
+  virtual void chatterCallback(const std_msgs::String::ConstPtr&);
+//  virtual void connectCallback(const ros::SingleSubscriberPublisher& pub);
+  ros::Subscriber sub;
+
 };
 }
 #endif
