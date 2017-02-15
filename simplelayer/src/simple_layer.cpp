@@ -16,6 +16,7 @@ SimpleLayer::SimpleLayer() {}
 void SimpleLayer::chatterCallback(const std_msgs::String::ConstPtr& msg)
 {
   sprintf(byte, "%s", msg->data.c_str());	//pass the message to local char byte.
+  ROS_INFO("%s",byte);				//debug: show incoming message
 }
 
 //This makes the plugin initialize on roscore boot
@@ -27,7 +28,7 @@ void SimpleLayer::onInitialize()
 
   //Subscribe to a topic our custom topic
   //this should be the oe to feed us the fake / robot pose
-  sub = nh.subscribe("chatter", 1000, &SimpleLayer::chatterCallback, this);
+  sub = nh.subscribe("rmc", 1000, &SimpleLayer::chatterCallback, this);
 
   dsrv_ = new dynamic_reconfigure::Server<costmap_2d::GenericPluginConfig>(nh);
   dynamic_reconfigure::Server<costmap_2d::GenericPluginConfig>::CallbackType cb = boost::bind(
