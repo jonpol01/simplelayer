@@ -19,7 +19,6 @@
     <build_depend>cmake_modules</build_depend>
     <build_depend>base_local_planner</build_depend>
 
-
     <export>
       <costmap_2d plugin="${prefix}/simple_layers.xml" />
     </export>
