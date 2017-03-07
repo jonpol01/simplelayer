@@ -1,12 +1,17 @@
 #include "ros/ros.h"
+#include "geometry_msgs/PoseArray.h"
 #include "std_msgs/String.h"
 
 /**
  * This tutorial demonstrates simple receipt of messages over the ROS system.
  */
-void chatterCallback(const std_msgs::String::ConstPtr& msg)
+void chatterCallback(const geometry_msgs::PoseArray::ConstPtr& msg)
+// void chatterCallback(const std_msgs::String::ConstPtr& msg)
 {
-  ROS_INFO("I heard: [%s]", msg->data.c_str());
+//   ROS_INFO("I heard: [%s]", msg->data.c_str());
+  geometry_msgs::Pose pose = msg->poses[0];
+  geometry_msgs::Point position = pose.position;
+  ROS_INFO("x: [%f], y: [%f]", position.x, position.y);
 }
 
 int main(int argc, char **argv)
@@ -45,7 +50,7 @@ int main(int argc, char **argv)
    * is the number of messages that will be buffered up before beginning to throw
    * away the oldest ones.
    */
-  ros::Subscriber sub = n.subscribe("chatter", 1000, chatterCallback);
+  ros::Subscriber sub = n.subscribe("move_base/local_costmap/SimpleLayer/rmc_update", 1000, chatterCallback);
 
   /**
    * ros::spin() will enter a loop, pumping callbacks.  With this version, all

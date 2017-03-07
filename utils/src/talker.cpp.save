@@ -2,37 +2,17 @@
 #include "std_msgs/String.h"
 #include "geometry_msgs/PoseArray.h"
 #include <geometry_msgs/PoseStamped.h>
-
+geometry_msgs::Pose pose_msgs;
 #include <sstream>
 
-#define Leg_y 10.00
-#define Leg_x 13.00
-
-//#define _DEBUG_
-#define _POSEARRAY_MSG_
-
-#ifdef _DEBUG_
-#undef _POSEARRAY_MSG_
-//      #define _STRING_MSG_
-#endif
+#define Leg_x 2.438
+#define Leg_y 1.949
 
 /**
  * This tutorial demonstrates simple sending of messages over the ROS system.
  */
 int main(int argc, char **argv)
 {
-  /**
-   * A count of how many messages we have sent. This is used to create
-   * a unique string for each message.
-   */
-  int count = 0;
-  double _x = Leg_x;
-  double _y = Leg_y;
-  double controller_frequency_;
-  bool x_flg, y_flg;
-  char byte[1000];
-
-
   /**
    * The ros::init() function needs to see argc and argv so that it can perform
    * any ROS arguments and name remapping that were provided at the command line.
@@ -52,9 +32,6 @@ int main(int argc, char **argv)
    */
   ros::NodeHandle n;
 
-  //basic parameters
-  n.param("controller_frequency", controller_frequency_, 10.0);
-
   /**
    * The advertise() function is how you tell ROS that you want to
    * publish on a given topic name. This invokes a call to the ROS
@@ -72,15 +49,23 @@ int main(int argc, char **argv)
    * than we can send them, the number here specifies how many messages to
    * buffer up before throwing some away.
    */
-#ifdef _POSEARRAY_MSG_
-  // ros::Publisher chatter_pub = n.advertise<geometry_msgs::PoseArray>("/move_base/global_costmap/SimpleLayer/rmc_update", 1000);
   ros::Publisher chatter_pub = n.advertise<geometry_msgs::PoseArray>("/move_base/local_costmap/SimpleLayer/rmc_update", 1000);
-#elif defined _DEBUG_
-  // ros::Publisher chatter_pub = n.advertise<std_msgs::String>("/move_base/global_costmap/SimpleLayer/rmc_update", 1000);
-  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("/move_base/local_costmap/SimpleLayer/rmc_update", 1000);
-#endif
+//  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("/move_base/local_costmap/SimpleLayer/rmc_update", 1000);
+//   ros::Publisher chatter_pub = n.advertise<std_msgs::String>("/move_base/local_costmap/SimpleLayer/chatter", 1000);
 
-  ros::Rate loop_rate(controller_frequency_);
+  ros::Rate loop_rate(10);
+
+  /**
+   * A count of how many messages we have sent. This is used to create
+   * a unique string for each message.
+   */
+  int count = 0;
+  double _x = Leg_x;
+  double _y = Leg_y;
+  bool x_flg, y_flg;
+  char byte[1000];
+//  unsigned int mx;
+//  unsigned int my;
 
 
   while (ros::ok())
@@ -88,36 +73,32 @@ int main(int argc, char **argv)
     /**
      * This is a message object. You stuff it with data, and then publish it.
      */
-
-#ifdef _POSEARRAY_MSG_
-    geometry_msgs::PoseArray Fake_pose;
-    geometry_msgs::PoseStamped cpose;
-
-    Fake_pose.header.stamp = ros::Time::now();
-
-//   cpose.pose.position.x =  8.10;
-//   cpose.pose.position.y =  3.77;
-   cpose.pose.position.x = 8.02;
-   cpose.pose.position.y = 3.46;
-
-    // cpose.pose.position.x =  _x;
-    // cpose.pose.position.y =  _y;
-
-    Fake_pose.poses.push_back(cpose.pose);
-
-    ROS_INFO("x: %f, y: %f", cpose.pose.position.x, cpose.pose.position.y);
-#elif defined _DEBUG_
-    std_msgs::String Fake_pose;
+//    std_msgs::String msg;
 
     std::stringstream ss;
-    ss << "hello world " << count;
-    sprintf(byte, "%.3f,%.3f", _x, _y);
+//    ss << "hello world " << count;
 
-    ss << byte;
-    Fake_pose.data = ss.str();
+//    sprintf(byte, "%.3f,%.3f", _x, _y);
 
-    ROS_INFO("%s", Fake_pose.data.c_str());
-#endif
+//    ss << byte;
+//    msg.data = ss.str();
+
+//    ROS_INFO("%s", msg.data.c_str());
+
+//    geometry_msgs::Pose pose;
+    geometry_msgs::Point position;
+    geometry_msgs::PoseArray pose;
+//    geometry_msgs::PoseStamped pose_stamped;
+
+//    pose_stamped.header.stamp = ros::Time::now();
+
+    pose.position.x = 1.0;
+    pose.position.y = 1.0;
+//    pose_stamped.pose.position.x = 1.0;
+//    pose_stamped.pose.position.y = 1.0;
+
+    ROS_INFO("x: %f, y: %f", pose.position.x, pose.position.y);
+//    ROS_INFO("x:%f,y:%f", pose_stamped.pose.position.x, pose_stamped.pose.position.y);
 
     /**
      * The publish() function is how you send messages. The parameter
@@ -125,24 +106,25 @@ int main(int argc, char **argv)
      * given as a template parameter to the advertise<>() call, as was done
      * in the constructor above.
      */
-    chatter_pub.publish(Fake_pose);
+//    chatter_pub.publish(msg);
+    chatter_pub.publish(pose);
 
     ros::spinOnce();
 
     loop_rate.sleep();
     ++count;
 
-    if(_x >= 9) x_flg = true;
-    else if(_x <= 8.02) x_flg = false;
+    if(_x >= 20) x_flg = true;
+    else if(_x <= Leg_x) x_flg = false;
 
     if(x_flg == true) _x -= 0.008;
     else _x += 0.008;
 
-    if(_y >= 3.46) y_flg = true;
-    else if(_y <= 2.74) y_flg = false;
+    if(_y >= 7) y_flg = true;
+    else if(_y <= Leg_y) y_flg = false;
 
-    if(y_flg == true) _y -= 0.005;
-    else _y += 0.005;
+    if(y_flg == true) _y -= 0.007;
+    else _y += 0.007;
   }
 
 

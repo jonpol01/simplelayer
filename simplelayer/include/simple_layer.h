@@ -27,13 +27,13 @@ class SimpleLayer : public costmap_2d::Layer
   private:
     void reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t level);
 
-  geometry_msgs::Point position;
-  double mark_x_, mark_y_;
-  double bot_x_, bot_y_;
-  double controller_frequency_;
-  geometry_msgs::Pose pose;
-  costmap_2d::Costmap2D *map;
-  costmap_2d::VoxelLayer *map2;
+    geometry_msgs::Point position;
+    double mark_x_, mark_y_;
+    double bot_x_, bot_y_;
+    double controller_frequency_;
+    geometry_msgs::Pose pose;
+    costmap_2d::Costmap2D *map;
+    costmap_2d::ObstacleLayer *layer;
     geometry_msgs::Point r_position;
 
     char byte[1000];
